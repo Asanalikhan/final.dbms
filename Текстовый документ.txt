@@ -1,0 +1,94 @@
+
+1.[ { $match:{color:"Blue"} },{ $group:{_id:"$car_id", cost:{$sum:"$price"}}}]
+
+2.[ 
+  { 
+    $sort: { "price": -1 } 
+  },
+  {
+    $project: {
+      "car_id": 1,
+      "price": 1
+    }
+  },
+  {
+    $limit: 7
+  }
+]
+
+3.[
+  {
+    $limit: 10,
+  },
+]
+
+4.[
+  {
+    $project: {
+      WEIGHT: 0,
+      CATEGORY_ID: 0,
+    },
+  },
+  {
+    $limit: 5,
+  },
+]
+
+5.[ 
+  { $match : { FULL_NAME : "Elysee Penas" } },
+  { $limit: 5 },
+  { $project: {
+    "FULL_NAME": 1,
+    "ADDRESS": 1,
+    "CUSTOMER_ID": 1
+  }}
+]
+
+6.[
+  {
+    $addFields: {
+      avgGrade: { $avg: "$price" }
+    }
+  },
+  {
+    $project: {
+      "color": 1,
+      "avgGrade": 1
+    }
+  },
+  {
+    $limit: 20
+  }
+][
+  {
+    $match: { "color": "Yellow" }
+  },
+  {
+    $count: "totalYellow"
+  }
+]
+
+7.[
+  {
+    $match: { "color": "Yellow" }
+  },
+  {
+    $count: "totalYellow"
+  }
+]
+
+8.[
+  {
+    $lookup: {
+      from: "Payment",
+      localField: "transaction_id",
+      foreignField: "transaction_id",
+      as: "Payment_details",
+    },
+  },
+  {
+    $limit: 1
+  }
+]
+
+9.db.Payment.aggregate([{$group:{_id: "_id", properties:{$push: {status: "$STATUS", type: "$TYPE", price: "$TOTAL_PRICE",},},}},{ $out: "useful"}])
